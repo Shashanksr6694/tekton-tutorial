@@ -1,0 +1,57 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: deploy-using-kubectl
+spec:
+  inputs:
+    resources:
+      - name: source
+        type: git
+      - name: builtImageWeb
+        type: image
+      - name: builtImageApp
+        type: image
+    params:
+      - name: path-web
+        description: Path to the manifest to apply
+      - name: path-app
+        description: Path to the app manifest to apply
+      - name: yqArg
+        description: Okay this is a hack, but I didn't feel right hard-coding `-d1` down below
+      - name: yamlPathToImage
+        description: The path to the image to replace in the yaml manifest (arg to yq)
+  steps:
+    - name: replace-image-web
+      image: mikefarah/yq
+      command: ["yq"]
+      args:
+        - "w"
+        - "-i"
+        - "${inputs.params.yqArg}"
+        - "${inputs.params.path-web}"
+        - "${inputs.params.yamlPathToImage}"
+        - "${inputs.resources.builtImageWeb.url}"
+    - name: replace-image-app
+      image: mikefarah/yq
+      command: ["yq"]
+      args:
+        - "w"
+        - "-i"
+        - "${inputs.params.yqArg}"
+        - "${inputs.params.path-app}"
+        - "${inputs.params.yamlPathToImage}"
+        - "${inputs.resources.builtImageApp.url}"
+    - name: run-kubectl-app
+      image: lachlanevenson/k8s-kubectl
+      command: ["kubectl"]
+      args:
+        - "apply"
+        - "-f"
+        - "${inputs.params.path-app}"
+    - name: run-kubectl-web
+      image: lachlanevenson/k8s-kubectl
+      command: ["kubectl"]
+      args:
+        - "apply"
+        - "-f"
+        - "${inputs.params.path-web}"

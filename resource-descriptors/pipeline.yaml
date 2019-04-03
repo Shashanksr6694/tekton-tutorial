@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: pipeline-tutorial
+spec:
+  resources:
+    - name: source-repo
+      type: git
+    - name: image-web
+      type: image
+    - name: image-app
+      type: image
+  tasks:
+    - name: build-and-push
+      taskRef:
+        name: build-docker-image-from-git-source
+      params:
+        - name: pathToDockerFileWeb
+          value: DockerfileWeb
+        - name: pathToDockerFileApp
+          value: DockerfileApp
+        - name: pathToContext
+          value: /workspace/source
+      resources:
+        inputs:
+          - name: source
+            resource: source-repo
+        outputs:
+          - name: builtImageWeb
+            resource: image-web
+          - name: builtImageApp
+            resource: image-app
+    - name: deploy
+      taskRef:
+        name: deploy-using-kubectl
+      resources:
+        inputs:
+          - name: source
+            resource: source-repo
+          - name: builtImageWeb
+            resource: image-web
+            from:
+              - build-and-push
+          - name: builtImageApp
+            resource: image-app
+            from:
+              - build-and-push
+      params:
+        - name: path-web
+          value: /workspace/source/web.yaml
+        - name: yqArg
+          value: "-d1"
+        - name: yamlPathToImage
+          value: "spec.template.spec.containers[0].image"
+        - name: path-app
+          value: /workspace/source/app.yaml
