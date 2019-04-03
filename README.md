@@ -19,7 +19,7 @@ This tutorial will run a basic pipeline which builds an image from source code, 
 
 Assuming your minikube cluster is up with tektoncd/pipeline installed
 
-#### 1. Clone the repository and move to directory
+1. #### Clone the repository and move to directory
 
     ```sh
     git clone https://github.com/piyush-garg/tekton-tutorial.git
@@ -29,7 +29,7 @@ Assuming your minikube cluster is up with tektoncd/pipeline installed
     cd tekton-tutorial
     ```
 
-#### 2. Update the docker secret file with your credentials
+2. #### Update the docker secret file with your credentials
     
     ```sh
     vi resource-descriptors/dockersecret.yaml
@@ -51,7 +51,7 @@ Assuming your minikube cluster is up with tektoncd/pipeline installed
     Provide username value equal to `echo -n dockerHubUsername | base64` e.g. `echo -n piyushgarg | base64` and 
     provide password value equal to `echo -n sockerHubPassword | base64 -w 0 
 
-#### 3. Update the Pipeline Image Resources
+3. #### Update the Pipeline Image Resources
     
     Edit the Pipeline Resource of Web Image and App image with your Docker Hub username.
     
@@ -67,19 +67,19 @@ Assuming your minikube cluster is up with tektoncd/pipeline installed
 
     Do the same for pipelineResourceImageApp.yaml
 
-#### 4. Apply Secret for Docker
+4. #### Apply Secret for Docker
 
     ```sh
     kubectl apply -f resource-descriptors/dockersecret.yaml
     ```
 
-#### 5. Create Service Account to use docker secret
+5. #### Create Service Account to use docker secret
 
     ```sh
     kubectl apply -f resource-descriptors/serviceaccount.yaml
     ```
 
-#### 6. Create Role and Role Bindings for service account to access pods, deployments and services api
+6. #### Create Role and Role Bindings for service account to access pods, deployments and services api
 
     ```sh
     kubectl apply -f resource-descriptors/role.yaml
@@ -89,7 +89,7 @@ Assuming your minikube cluster is up with tektoncd/pipeline installed
     kubectl apply -f resource-descriptors/rolebinding.yaml
     ```
 
-#### 7. Create all the pipeline resources required for pipeline
+7. #### Create all the pipeline resources required for pipeline
 
     ```sh
     kubectl apply -f resource-descriptors/pipelineResourceImageWeb.yaml
@@ -103,7 +103,7 @@ Assuming your minikube cluster is up with tektoncd/pipeline installed
     kubectl apply -f resource-descriptors/pipelineResourceGit.yaml
     ```
 
-#### 8. Create task required for pipeline
+8. #### Create task required for pipeline
 
     ```sh
     kubectl apply -f resource-descriptors/taskpush.yaml
@@ -113,7 +113,7 @@ Assuming your minikube cluster is up with tektoncd/pipeline installed
     kubectl apply -f resource-descriptors/taskdeploy.yaml
     ```
 
-#### 9. Create pipeline and create first instance of pipeline using pipeline run
+9. #### Create pipeline and create first instance of pipeline using pipeline run
    
     ```sh
     kubectl apply -f resource-descriptors/pipeline.yaml
@@ -127,7 +127,7 @@ Assuming your minikube cluster is up with tektoncd/pipeline installed
     
     It will create Deployment and Service for both web and app
 
-#### 10. Wait till both pods get in running state and access the service.
+10. #### Wait till both pods get in running state and access the service.
 
     ```sh
     kubectl get pods -w
