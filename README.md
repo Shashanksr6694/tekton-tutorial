@@ -12,7 +12,7 @@ This tutorial will run a basic pipeline which builds an image from source code, 
 
 4. [tektoncd-pipeline](https://github.com/tektoncd/pipeline/blob/master/docs/install.md)
     ```sh
-    kubectl apply --filename https://storage.googleapis.com/knative-releases/build-pipeline/latest/release.yaml
+    kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/release.yaml
     ```
 
 #### Tutorial
@@ -49,7 +49,7 @@ Assuming your minikube cluster is up with tektoncd/pipeline installed
     ```
     
     Provide username value equal to `echo -n dockerHubUsername | base64` e.g. `echo -n piyushgarg | base64` and 
-    provide password value equal to `echo -n sockerHubPassword | base64 -w 0 
+    provide password value equal to `echo -n dockerHubPassword | base64 -w 0`
 
 3. #### Update the Pipeline Image Resources
     
