@@ -1,9 +1,9 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: image-web
+  name: image-app
 spec:
   type: image
   params:
     - name: url
-      value: docker.io/DockerHubUsername/test-web
+      value: docker.io/sthaha/pgarg-tkn-tut-app
