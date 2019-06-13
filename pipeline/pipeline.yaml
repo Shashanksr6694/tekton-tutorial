@@ -14,11 +14,7 @@ spec:
     - name: build-app-image
       taskRef:
         name: build-app-image
-      params:
-        - name: pathToDockerFileApp
-          value: DockerfileApp
-        - name: pathToContext
-          value: /workspace/source
+
       resources:
         inputs:
           - name: source
@@ -29,11 +25,7 @@ spec:
     - name: build-web-image
       taskRef:
         name: build-web-image
-      params:
-        - name: pathToDockerFileWeb
-          value: DockerfileWeb
-        - name: pathToContext
-          value: /workspace/source
+
       resources:
         inputs:
           - name: source
@@ -41,6 +33,8 @@ spec:
         outputs:
           - name: builtImageWeb
             resource: image-web
+
+    ### deploy ###
     - name: deploy
       taskRef:
         name: deploy-using-kubectl
