@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -e -u -o pipefail
+
+declare -r SCRIPT_PATH=$(readlink -f "$0")
+declare -r SCRIPT_DIR=$(cd $(dirname "$SCRIPT_PATH") && pwd)
+
+
+demo.cleanup() {
+  kubectl get all
+  echo "-------------------------------------------"
+
+  kubectl delete pipelineruns --all
+  kubectl delete pipeline --all
+
+  kubectl delete taskruns --all
+  kubectl delete tasks --all
+  echo "-------------------------------------------"
+
+  kubectl get all
+
+  return $?
+}
+
+
+demo.run() {
+  kubectl apply -f tasks
+  kubectl apply -f pipeline
+  echo "-------------------------------------------"
+
+  kubectl get pipelineruns
+
+  return $?
+}
+
+demo.rerun() {
+  demo.cleanup
+  demo.run
+}
+
+_log() {
+    local level=$1; shift
+    echo -e "$level: $@"
+}
+
+log.err() {
+    _log "ERROR" "$@" >&2
+}
+
+err() {
+    local code=$1; shift
+    local msg="$@"; shift
+    log.err $msg
+    exit $code
+}
+
+log.debug() {
+    _log DEBUG "$@"
+}
+
+
+valid_command() {
+  local fn=$1; shift
+  [[ $(type -t "$fn") == "function" ]]
+}
+
+execute() {
+  echo "Running:  '$@'"
+  ${DRY_RUN:-false} || "$@"
+}
+
+main() {
+  local fn="demo.${1:-''}"
+  valid_command "$fn" || err  1 "invalid sub command $1"
+  shift
+  $fn "$@"
+  return $?
+}
+
+main "$@"

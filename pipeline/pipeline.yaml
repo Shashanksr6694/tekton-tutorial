@@ -11,12 +11,10 @@ spec:
     - name: image-app
       type: image
   tasks:
-    - name: build-and-push
+    - name: build-app-image
       taskRef:
-        name: build-docker-image-from-git-source
+        name: build-app-image
       params:
-        - name: pathToDockerFileWeb
-          value: DockerfileWeb
         - name: pathToDockerFileApp
           value: DockerfileApp
         - name: pathToContext
@@ -26,10 +24,23 @@ spec:
           - name: source
             resource: source-repo
         outputs:
-          - name: builtImageWeb
-            resource: image-web
           - name: builtImageApp
             resource: image-app
+    - name: build-web-image
+      taskRef:
+        name: build-web-image
+      params:
+        - name: pathToDockerFileWeb
+          value: DockerfileWeb
+        - name: pathToContext
+          value: /workspace/source
+      resources:
+        inputs:
+          - name: source
+            resource: source-repo
+        outputs:
+          - name: builtImageWeb
+            resource: image-web
     - name: deploy
       taskRef:
         name: deploy-using-kubectl
@@ -40,11 +51,11 @@ spec:
           - name: builtImageWeb
             resource: image-web
             from:
-              - build-and-push
+              - build-web-image
           - name: builtImageApp
             resource: image-app
             from:
-              - build-and-push
+              - build-app-image
       params:
         - name: path-web
           value: /workspace/source/web.yaml
