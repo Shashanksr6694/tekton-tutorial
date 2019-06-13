@@ -10,10 +10,12 @@ spec:
     params:
       - name: pathToDockerFileWeb
         description: The path to the dockerfile to build
-        default: /workspace/source/Dockerfile
+        default: DockerfileWeb
+
       - name: pathToContext
         description: The build context used by Kaniko
-        default: /workspace/source
+        default: /workspace/source/
+
   outputs:
     resources:
       - name: builtImageWeb
