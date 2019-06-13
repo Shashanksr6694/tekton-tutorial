@@ -24,10 +24,14 @@ demo.cleanup() {
 
 demo.run() {
   kubectl apply -f tasks
-  kubectl apply -f pipeline
-  echo "-------------------------------------------"
 
+  kubectl delete --ignore-not-found -f pipeline/run.yaml
+  kubectl apply -f pipeline
+
+  echo "-------------------------------------------"
   kubectl get pipelineruns
+
+  echo "-------------------------------------------"
 
   return $?
 }
