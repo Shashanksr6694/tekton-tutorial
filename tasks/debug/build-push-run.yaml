@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-build-and-push-web
+spec:
+  inputs:
+    params:
+      - name: pathToDockerFileWeb
+        value: DockerfileWeb
+      - name: pathToContext
+        value: /workspace/source
+    resources:
+      - name: source
+        resourceRef:
+          name: git
+  outputs:
+    resources:
+      - name: builtImageWeb
+        resourceRef:
+          name: image-web
+  serviceAccount: docker-auth-sa
+  taskRef:
+    kind: Task
+    name: build-docker-image-for-web
